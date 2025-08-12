@@ -24,8 +24,8 @@ class RecipeIngredientInlineSerializer(serializers.ModelSerializer):
 
 class MealSerializer(serializers.ModelSerializer):
     dietary = serializers.CharField(source="dietary.name", read_only=True)  # only name
-    items = RecipeIngredientInlineSerializer(many=True, read_only=True)
-
+    ingredient_names = serializers.SerializerMethodField()
+    
     total_energy_kj = serializers.SerializerMethodField()
     total_protein = serializers.SerializerMethodField()
     total_fat = serializers.SerializerMethodField()
@@ -36,11 +36,17 @@ class MealSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meal
         fields = [
-            "id", "name", "description", "dietary", "items",
+            "id", "name", "description", "dietary", "ingredient_names",
             "total_energy_kj", "total_protein", "total_fat",
             "total_carbs", "total_fiber", "total_cost"
         ]
 
+    def get_ingredient_names(self, obj):
+        return list(
+            obj.items.select_related("ingredient")
+            .values_list("ingredient__name", flat=True)
+        )
+        
     def get_total_energy_kj(self, obj):
         return self._sum_nutrition(obj, "energy_kj")
 
