@@ -264,8 +264,8 @@ class MonthlyMenuView(APIView):
                 })
 
         payload = {
-            "year": year,
-            "month": month,
+            #"year": year,
+            #"month": month,
             "startDay": start_day,
             "daysInMonth": days_in_month,
             "menuItems": menu_items,

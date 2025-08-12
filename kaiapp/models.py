@@ -64,7 +64,7 @@ class Meal(models.Model):
     (if multiple, change FK to ManyToMany).
     Ingredients are linked via RecipeIngredient to store quantities.
     """
-    name = models.CharField(max_length=160, unique=True)  # Meal name
+    name = models.CharField(max_length=160)  # Meal name
     description = models.TextField(blank=True)  # Optional description
     dietary = models.ForeignKey(  # Linked dietary type
         Dietary, null=True, blank=True, on_delete=models.PROTECT

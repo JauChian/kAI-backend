@@ -131,8 +131,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+}
+
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://ce50824d60b2.ngrok-free.app",  # 你目前這一個
     # Add your vercel react deploy url here
 ]
 
@@ -146,3 +154,6 @@ CORS_ALLOW_HEADERS = [
 
 CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins, or specify allowed origins
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "[::1]", ".ngrok-free.app"]
+
