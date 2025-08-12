@@ -1,0 +1,36 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+
+# === Environment & Secrets ===
+.env
+.env.local
+.env.*
+*.pem
+*.key
+
+# === Django ===
+db.sqlite3
+*.log
+
+# === LlamaIndex (persistent storage) ===
+donation_feature/chatbot/index/
+test_index_dir/
+
+# === IDE ===
+.vscode/
+.idea/
+
+# === Node (if using frontend) ===
+node_modules/
+
+# === Optional: Ignore requirements.txt if auto-generated temporarily ===
+# requirements.txt
+
+# === Vertual Environment ===
+.venv/
+venv/
