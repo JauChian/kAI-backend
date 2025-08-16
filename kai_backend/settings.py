@@ -81,13 +81,25 @@ WSGI_APPLICATION = "kai_backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL", "sqlite:///db.sqlite3"),
-        conn_max_age=600,
-        ssl_require=True,   
-    )
-}
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
+    # 雲端：用 Postgres，要求 SSL
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
+else:
+    # 本機：用 SQLite，不要加 sslmode
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
