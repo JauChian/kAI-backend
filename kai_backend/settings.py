@@ -13,6 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-4cz(wa-+qmd_ld&k)!lwjd@m37+8syyr6jhb*8b4@9hc@(apvm"
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -67,13 +68,23 @@ WSGI_APPLICATION = "kai_backend.wsgi.application"
 
 
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL", "sqlite:///db.sqlite3"),
-        conn_max_age=600,
-        ssl_require=True,   
-    )
-}
+if DATABASE_URL:
+    # 有設 DATABASE_URL（例如 Render 或你本機想連 Render DB）→ 用 Postgres + SSL
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
+else:
+    # 沒設 DATABASE_URL（本機開發預設）→ 用 SQLite（不要帶 ssl 參數）
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
@@ -145,7 +156,7 @@ CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
 
 
-CSRF_TRUSTED_ORIGINS = ["https://kai-backend-36l3.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["https://kai-backend-36l3.onrender.com","https://05edd35bf180.ngrok-free.app/"]
 
 
 
