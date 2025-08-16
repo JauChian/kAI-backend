@@ -17,7 +17,10 @@ SECRET_KEY = "django-insecure-4cz(wa-+qmd_ld&k)!lwjd@m37+8syyr6jhb*8b4@9hc@(apvm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "[::1]", ".ngrok-free.app","https://kai-backend-m46f.onrender.com","kai-backend-m46f.onrender.com"]
+ALLOWED_HOSTS = [
+    "127.0.0.1", "localhost", "[::1]", ".ngrok-free.app",
+    "kai-backend-m46f.onrender.com",
+]
 
 
 # Application definition
@@ -139,7 +142,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://kai-happytummy.vercel.app/",
+    "https://kai-happytummy.vercel.app",
     "https://ce50824d60b2.ngrok-free.app",  # 你目前這一個
     # Add your vercel react deploy url here
 ]
@@ -157,7 +160,7 @@ CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
 
 
-CSRF_TRUSTED_ORIGINS = ["https://kai-backend-m46f.onrender.com","https://05edd35bf180.ngrok-free.app/"]
+CSRF_TRUSTED_ORIGINS = ["https://kai-backend-m46f.onrender.com","https://05edd35bf180.ngrok-free.app"]
 
 
 
