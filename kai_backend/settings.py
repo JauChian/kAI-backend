@@ -139,7 +139,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://kai-happytummy.vercel.app/"
+    "https://kai-happytummy.vercel.app/",
     "https://ce50824d60b2.ngrok-free.app",  # 你目前這一個
     # Add your vercel react deploy url here
 ]
