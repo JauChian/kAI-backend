@@ -17,7 +17,7 @@ SECRET_KEY = "django-insecure-4cz(wa-+qmd_ld&k)!lwjd@m37+8syyr6jhb*8b4@9hc@(apvm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "[::1]", ".ngrok-free.app","https://kai-backend-m46f.onrender.com"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "[::1]", ".ngrok-free.app","https://kai-backend-m46f.onrender.com","kai-backend-m46f.onrender.com"]
 
 
 # Application definition
