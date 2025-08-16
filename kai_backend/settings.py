@@ -19,7 +19,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "127.0.0.1", "localhost", "[::1]", ".ngrok-free.app",
-    "kai-backend-m46f.onrender.com",
+    "kai-backend-zsbd.onrender.com",
 ]
 
 
@@ -160,7 +160,7 @@ CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
 
 
-CSRF_TRUSTED_ORIGINS = ["https://kai-backend-m46f.onrender.com","https://05edd35bf180.ngrok-free.app"]
+CSRF_TRUSTED_ORIGINS = ["https://kai-backend-zsbd.onrender.com","https://05edd35bf180.ngrok-free.app"]
 
 
 
