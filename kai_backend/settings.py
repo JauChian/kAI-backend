@@ -155,5 +155,5 @@ CORS_ALLOW_HEADERS = [
 CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins, or specify allowed origins
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "[::1]", ".ngrok-free.app"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "[::1]", ".ngrok-free.app", "kai-backend-e0x3.onrender.com"]
 
