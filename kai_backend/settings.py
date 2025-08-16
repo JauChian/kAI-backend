@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,10 +82,10 @@ WSGI_APPLICATION = "kai_backend.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.parse(
+        os.environ.get("DATABASE_URL", "sqlite:///db.sqlite3"),
+        conn_max_age=600,
+    )
 }
 
 
@@ -158,3 +160,6 @@ CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "[::1]", ".ngrok-free.app","kai-backend-36l3.onrender.com"]
 
 CSRF_TRUSTED_ORIGINS = ["https://kai-backend-36l3.onrender.com"]
+
+
+
