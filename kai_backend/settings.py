@@ -7,18 +7,14 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-4cz(wa-+qmd_ld&k)!lwjd@m37+8syyr6jhb*8b4@9hc@(apvm"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = [
-    "127.0.0.1", "localhost", "[::1]", ".ngrok-free.app",
+    "127.0.0.1", "localhost", "[::1]",
     "kai-backend-zsbd.onrender.com",
 ]
 
@@ -72,7 +68,7 @@ WSGI_APPLICATION = "kai_backend.wsgi.application"
 
 
 if DATABASE_URL:
-    # 有設 DATABASE_URL（例如 Render 或你本機想連 Render DB）→ 用 Postgres + SSL
+    
     DATABASES = {
         "default": dj_database_url.config(
             default=DATABASE_URL,
@@ -143,8 +139,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://kai-happytummy.vercel.app",
-    "https://ce50824d60b2.ngrok-free.app",  # 你目前這一個
-    # Add your vercel react deploy url here
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -155,12 +149,12 @@ CORS_ALLOW_HEADERS = [
     'content-type',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins, or specify allowed origins
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
 
 
-CSRF_TRUSTED_ORIGINS = ["https://kai-backend-zsbd.onrender.com","https://05edd35bf180.ngrok-free.app"]
+CSRF_TRUSTED_ORIGINS = ["https://kai-backend-zsbd.onrender.com"]
 
 
 
