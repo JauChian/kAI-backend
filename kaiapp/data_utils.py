@@ -1,6 +1,10 @@
 from kaiapp.models import Ingredient, Dietary
 
 def load_ingredients():
+    """
+    Load all ingredients from the database and return them as a list of dicts.
+    Each dict includes: name, price_per_100g, and energy_kj.
+    """
     try:
         ingredients = Ingredient.objects.all()
         return [
@@ -13,14 +17,17 @@ def load_ingredients():
             for c in ingredients
         ]
     except Exception as e:
+        # Log error if the query fails
         print(f"Failed to load charity cache: {e}")
         return []
         
 def get_ingredients_for_dietary(dietary: str):
     """
-    dietary 只接受: Standard, Vegetarian, Vegan, Halal, Gluten-free
-    - Standard: 全部食材
-    - 其他: 依 Ingredient.dietaries M2M 過濾
+    Filter ingredients by dietary category.
+    Accepted values: Standard, Vegetarian, Vegan, Halal, Gluten-free
+    
+    - Standard: returns all ingredients
+    - Others: filters by Ingredient.dietaries ManyToMany relation
     """
     if not dietary or dietary.lower() == "standard":
         return Ingredient.objects.all().order_by("name")
@@ -34,8 +41,13 @@ def get_ingredients_for_dietary(dietary: str):
 
 def ingredients_to_prompt_block(qs):
     """
-    把 QuerySet 轉成你 prompt 要的格式：
-    “name, price_per_100g, energy_kj per 100g”
+    Convert a QuerySet of ingredients into a string block
+    suitable for feeding into a prompt.
+
+    Format per line: "name, price_per_100g, energy_kj per 100g"
+    Example:
+    Brown Rice, 0.50, 1500
+    Chicken Breast, 1.20, 1100
     """
     lines = []
     for i in qs:

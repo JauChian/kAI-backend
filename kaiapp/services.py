@@ -4,8 +4,17 @@ from .models import Ingredient
 
 def compute_totals(items):
     """
-    items: [{"name": "Rice", "quantity_g": 180}, ...]
-    回傳: (total_energy_kj, total_cost)
+    Compute total energy (kJ) and cost for a given list of ingredients.
+    
+    Args:
+        items (list[dict]): List of dicts in the form:
+            [{"name": "Rice", "quantity_g": 180}, ...]
+    
+    Returns:
+        tuple: (total_energy_kj, total_cost), both rounded to 2 decimals.
+    
+    Raises:
+        ValueError: If an ingredient cannot be found in the database.
     """
     total_energy = Decimal("0")
     total_cost = Decimal("0")
@@ -14,14 +23,33 @@ def compute_totals(items):
         if not ing:
             raise ValueError(f"Ingredient not found: {it['name']}")
         qty = Decimal(str(it["quantity_g"]))
+        # Energy and cost are scaled by quantity (per 100g basis)
         total_energy += (ing.energy_kj * qty / Decimal("100"))
         total_cost   += (ing.price_per_100g * qty / Decimal("100"))
-    # 四捨五入顯示
+    # Round to 2 decimals for display
     return round(total_energy, 2), round(total_cost, 2)
 
 def validate_menu(items, min_kj=2500, max_cost=3, min_g=200, max_g=350):
     """
-    基本規則：能量>=min_kj、成本<=max_cost、總重量在區間內。
+    Validate a menu based on simple nutrition and budget rules.
+    
+    Rules:
+        - Total weight must be between min_g and max_g (grams)
+        - Total energy must be >= min_kj (kJ)
+        - Total cost must be <= max_cost (currency units)
+    
+    Args:
+        items (list[dict]): List of dicts in the form:
+            [{"name": "Rice", "quantity_g": 180}, ...]
+        min_kj (int|float): Minimum required energy in kJ (default=2500)
+        max_cost (int|float): Maximum allowed cost (default=3)
+        min_g (int|float): Minimum total weight in grams (default=200)
+        max_g (int|float): Maximum total weight in grams (default=350)
+    
+    Returns:
+        tuple: (is_valid, result)
+            - If valid: (True, {"total_kj": x, "total_cost": y})
+            - If invalid: (False, error_message)
     """
     total_g = sum(Decimal(str(i["quantity_g"])) for i in items)
     if not (Decimal(str(min_g)) <= total_g <= Decimal(str(max_g))):

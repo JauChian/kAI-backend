@@ -1,45 +1,37 @@
 #  kAI — AI Menu Generator (Backend)
 
-**Backend & AI service** that generates **diverse, nutritious, $3 lunchbox menus** to help reduce food waste in New Zealand’s free school lunch program.
-
-- **Role:** Backend & AI Developer  
-- **Year:** 2025  
-- **Stack:** Django · Django REST Framework · PostgreSQL · OpenAI GPT  
-- **Frontend demo:** https://kai-happytummy.vercel.app/
-
-> This repository contains the **Django/DRF API**. The React (Tailwind) frontend lives in a separate app (see demo above).
-
----
-
-## Overview
-
-Built as a 48-hour AI Hackathon MVP, **kAI** tackles high food waste (≈70%) in the government-funded school lunch program, driven by repetitive and uninspiring menus.  
-The service generates **monthly meal plans** within a **$3 per lunchbox** budget while respecting **dietary requirements**, **calorie/nutrition guidance**, and **available inventory/budget** constraints.
-
-### What it does
-- Generates **monthly menus** for schools under strict budget
-- Supports **dietary filters** (vegetarian, halal, gluten-free)
-- Is **calorie/nutrition-aware** in prompts (aligned with dietary standards)
-- Incorporates **available inventory** and **student counts**
+Backend service for **AI-driven school lunch menu generation**, built with **Django REST Framework** and **OpenAI GPT**.  
+Designed during an AI Hackathon to help reduce food waste in New Zealand’s free school lunch program by generating **nutritious, budget-friendly $3 menus**.
 
 ---
 
 ## Features
 
-- ✅ AI-generated monthly menus within a **$3 budget**  
-- ✅ Customization by **dietary requirements** (vegetarian / halal / gluten-free)  
-- ✅ **Calorie/nutrition-aware** prompt design  
-- ✅ Uses **available inventory** & budget constraints to optimize plans  
-- ✅ RESTful API for frontend integration (React/Tailwind)  
+- **AI-Generated Menus**  
+  - Creates balanced, varied lunch menus using GPT with strict validation rules.  
+  - Supports multiple dietary types: Standard, Vegetarian, Vegan, Halal, Gluten-free.  
+
+- **Nutritional & Cost Validation**  
+  - Ensures each menu meets energy, weight, and budget constraints.  
+  - Automatically computes **total energy (kJ)**, **protein/fat/carbs/fiber**, and **cost (NZD)**.  
+
+- **REST API Endpoints**  
+  - `POST /api/generate-menus/` → generate AI menus, validate, and save to DB.  
+  - `GET /api/monthly-menu/` → produce a **calendar-style menu** for the next month (Mon–Fri).  
+  - `GET /api/meals/` → list, retrieve, create, update, or delete meals.  
+
+- **Database Integration**  
+  - Stores ingredients, meals, and recipes in PostgreSQL.  
+  - Handles allergens, dietary tags, and nutritional metadata.
 
 ---
 
 ## Tech Stack
 
 - **Backend:** Django, Django REST Framework  
-- **DB:** PostgreSQL (SQLite supported for local dev)  
-- **AI:** OpenAI GPT (server-side prompting)  
-- **Other:** Python 3.10+, pip/venv
+- **Database:** PostgreSQL (SQLite supported for local dev)  
+- **AI:** OpenAI GPT (prompt-based menu generation)  
+- **Other:** Python 3.10+, Docker-ready setup possible  
 
 ## Screenshots
 ![Screenshot](kai-0.png)
@@ -50,5 +42,6 @@ The service generates **monthly meal plans** within a **$3 per lunchbox** budget
 
 ## Outcome
 
-Delivered a functional MVP within 48 hours at an AI Hackathon:
-AI-generated menus that are cost-efficient, nutritious, and tailored to dietary needs and available resources—demonstrating potential to reduce food waste and improve student satisfaction.
+Delivered a working MVP in 48 hours during Hackathon.
+Showcased potential to reduce food waste and improve student satisfaction.
+Provides a foundation for scalable, AI-powered school meal planning systems.

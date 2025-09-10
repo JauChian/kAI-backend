@@ -2,25 +2,16 @@
 import json
 from decimal import Decimal
 from typing import Iterable
-# kaiapp/views_generate.py
 import calendar
 import random
 from datetime import date
-
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
-from .models import Meal
 from django.db.models import QuerySet
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-
 from openai import OpenAI
-
 from .models import Ingredient, Meal, RecipeIngredient, Dietary
 from .serializers import MealSerializer
 from .services import validate_menu, compute_totals
@@ -41,6 +32,13 @@ DIETARY_CANONICAL = {
 }
 
 def normalize_dietary(name: str | None) -> str:
+    """
+    Normalize dietary string input (case-insensitive, handles aliases).
+    Examples:
+        - "vegan", "Vegan" -> "Vegan"
+        - "gluten_free" -> "Gluten-free"
+        - None or unknown -> "Standard"
+    """
     if not name:
         return "Standard"
     key = name.strip().lower()
@@ -86,21 +84,25 @@ class GenerateMenusView(APIView):
       { "saved": [ <MealSerializer with totals...> ] }
     """
     def post(self, request):
+        # Parse batch_size from request (default 5)
         try:
             batch_size = int(request.data.get("batch_size", 5))
         except Exception:
             return Response({"error": "batch_size must be an integer."}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        # Normalize dietary string
         dietary = normalize_dietary(request.data.get("dietary"))
+        # Filter available ingredients
         qs = get_ingredients_for_dietary(dietary)
 
-        # 若可用食材太少，直接回覆（避免 GPT 無法組菜）
+        # If not enough ingredients, abort early (GPT can't build valid menus)
         if qs.count() < 6:
             return Response(
                 {"error": f"Not enough ingredients for dietary '{dietary}'. Please add more."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
+            
+        # Build GPT prompt
         ingredients_block = to_prompt_block(qs)
         prompt = build_menu_prompt(ingredients_block, batch_size=batch_size, dietary=dietary)
 
@@ -161,6 +163,7 @@ class GenerateMenusView(APIView):
                     break
                 RecipeIngredient.objects.create(recipe=meal, ingredient=ing, quantity_g=qty)
 
+            # Rollback if any item failed
             if failed:
                 meal.delete()
                 continue
@@ -172,6 +175,7 @@ class GenerateMenusView(APIView):
             ]
             total_kj, total_cost = compute_totals(db_items)
 
+            # Serialize meal + add computed totals
             serialized = MealSerializer(meal).data
             serialized["total_energy_kj"] = float(total_kj)
             serialized["total_cost"] = float(total_cost)
@@ -207,12 +211,14 @@ def normalize_dietary(name: str | None) -> str:
 class MonthlyMenuView(APIView):
     """
     GET /api/monthly-menu/?dietary=Standard
-    產生「下個月」的行事曆菜單（只排週一到週五）。
-    回傳：
+
+    Generate a "monthly calendar menu" for the next month.
+    - Only assigns meals to weekdays (Mon–Fri).
+    - Each weekday is randomly assigned an available meal.
+
+    Response example:
     {
-      "year": 2025,
-      "month": 9,
-      "startDay": 3,          # Sunday=0 ... Saturday=6（下個月1號）
+      "startDay": 3,          # Sunday=0 ... Saturday=6 (weekday of 1st day of month)
       "daysInMonth": 30,
       "menuItems": [
         { "date": "2025-09-01", "mealId": "12", "menuName": "Karaage Crunch Bowl" },
@@ -221,7 +227,7 @@ class MonthlyMenuView(APIView):
     }
     """
     def get(self, request):
-        # 1) 目標月份：下個月（使用系統時區）
+        # 1) Target month = next calendar month
         today = timezone.localdate()
         if today.month == 12:
             year, month = today.year + 1, 1
@@ -230,15 +236,15 @@ class MonthlyMenuView(APIView):
 
         first_day = date(year, month, 1)
         days_in_month = calendar.monthrange(year, month)[1]
-        # Python weekday(): Mon=0..Sun=6 -> 前端要 Sunday=0..Saturday=6
+        # Python weekday(): Mon=0..Sun=6, but frontend expects Sun=0..Sat=6
         start_day = (first_day.weekday() + 1) % 7
 
-        # 2) 只取 Standard（或可用 ?dietary=Vegan 等覆蓋）
+        # 2) Filter meals by dietary type (default Standard)
         dietary = normalize_dietary(request.GET.get("dietary") or "Standard")
 
         qs = Meal.objects.all()
         if dietary == "Standard":
-            # 允許 dietary 為 Standard 或 None（沒標籤的也算 Standard）
+            # Standard includes meals explicitly tagged Standard OR with no dietary tag
             qs = qs.filter(Q(dietary__name__iexact="Standard") | Q(dietary__isnull=True))
         else:
             qs = qs.filter(dietary__name__iexact=dietary)
@@ -250,7 +256,7 @@ class MonthlyMenuView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # 3) 只在週一到週五隨機指派（可重複）
+        # 3) Assign a random meal to each weekday (Mon–Fri), repeat allowed
         menu_items = []
         for day in range(1, days_in_month + 1):
             d = date(year, month, day)

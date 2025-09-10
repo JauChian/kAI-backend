@@ -1,15 +1,42 @@
 def filter_ingredients_by_dietary(ingredients_list, dietary):
     """
-    根據 dietary 過濾食材
-    ingredients_list: list[dict]，每個元素至少要有 'name' 和 'dietary' 屬性
-    dietary: 'Standard' | 'Vegetarian' | 'Vegan' | 'Halal' | 'Gluten-free'
+    Filter ingredients based on dietary type.
+
+    Args:
+        ingredients_list (list[dict]): Each element must have at least
+            'name' and 'dietary' fields.
+        dietary (str): One of
+            'Standard' | 'Vegetarian' | 'Vegan' | 'Halal' | 'Gluten-free'
+
+    Returns:
+        list[dict]: A filtered list of ingredients.
+            - Standard: returns all ingredients (no filtering).
+            - Otherwise: only ingredients matching the dietary field.
     """
     if dietary == "Standard":
-        return ingredients_list  # 不過濾，所有食材可用
+        return ingredients_list  # No filtering, all ingredients allowed
 
     return [ing for ing in ingredients_list if ing.get("dietary") == dietary]
 
+"""
+    Build a structured prompt for an AI model to generate valid school-lunch menus.
 
+    Args:
+        ingredients_block (str): Text block of available ingredients in the format
+            "name, price_per_100g, energy_kj_per_100g"
+        batch_size (int): Number of menus to generate.
+        dietary (str): Dietary type (Standard, Vegetarian, Vegan, Halal, Gluten-free).
+        energy_min (int): Minimum required energy (kJ) per menu.
+        price_min (float): Minimum cost per menu (NZD).
+        price_max (float): Maximum cost per menu (NZD).
+        weight_min (int): Minimum total weight (grams) per menu.
+        weight_max (int): Maximum total weight (grams) per menu.
+        items_min (int): Minimum number of distinct items in a menu.
+        items_max (int): Maximum number of distinct items in a menu.
+
+    Returns:
+        str: A formatted instruction prompt for the AI.
+    """
 def build_menu_prompt(
     ingredients_block: str,
     batch_size: int = 10,
@@ -22,7 +49,10 @@ def build_menu_prompt(
     items_min: int = 5,
     items_max: int = 6,
 ):
+    # Suggested cuisine styles to diversify menus
+    
     cuisine_cues = "Teriyaki, Karaage, Sichuan, Satay, Miso, Kiwi, Tex-Mex, Mediterranean, Italian, Japanese, Burger, Indian, Stir-Fry, Chinese, Viet, Māori, Islander"
+    # Suffixes for catchy meal names
     suffixes = "Bowl, Box, Wrap, Stack, Smash, Blaze, Boost, Fuel, Feast"
 
     return f"""
